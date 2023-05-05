@@ -1,0 +1,52 @@
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-6 col-md-4">
+        <main class="form-signin">
+          <form>
+            <div class="text-center mb-4">
+              <img class="mb-4" src="/assets/img/popcorn.png" alt="" width="230" height="230">
+              <h1 class="h3 mb-3 fw-normal">Create new account</h1>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="username" class="form-control" id="floatingEmail" placeholder="email" name="email" [(ngModel)]="email" [ngModelOptions]="{standalone: true}">
+              <label for="floatingInput">Email</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="username" class="form-control" id="floatingName" placeholder="name" name="name" [(ngModel)]="name" [ngModelOptions]="{standalone: true}">
+              <label for="floatingInput">Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="username" class="form-control" id="floatingUsername" placeholder="username" name="username" [(ngModel)]="username" [ngModelOptions]="{standalone: true}">
+              <label for="floatingInput">Username</label>
+            </div>
+
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password" [(ngModel)]="password" [ngModelOptions]="{standalone: true}">
+              <label for="floatingPassword">Password</label>
+            </div>
+
+            <div class="checkbox mb-3">
+              <label>
+                <input type="checkbox" [(ngModel)]="isAdmin" name="isAdmin"> admin account
+              </label>
+            </div>
+
+
+            <div>
+              <button class="w-100 btn btn-lg btn-success" (click) = "registerNow()">Register Now</button>
+            </div>
+
+          </form>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <app-footer></app-footer>
+</body>
