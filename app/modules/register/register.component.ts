@@ -1,26 +1,45 @@
-import { Component } from '@angular/core';
+// register.component.ts
+import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/service/User.service';
 import { User } from 'src/app/model/User';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl } from '@angular/forms';
-
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
 
-  email: string = "";
-  name: string = "";
-  username: string = "";
-  password: string = "";
+  registerForm: FormGroup = new FormGroup({});
+
+  email = "";
+  name = "";
+  username = "";
+  password = "";
   isAdmin: boolean = false;
 
-  constructor(private userService : UserService, private router: Router) { }
+  constructor(private userService : UserService,
+              private router: Router,
+              private formBuilder: FormBuilder) { }
+
+  ngOnInit() {
+    this.registerForm = this.formBuilder.group({
+      email: ['', Validators.required],
+      name: ['', Validators.required],
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
 
   registerNow() {
+
+    this.email = this.registerForm.value.email;
+    this.name = this.registerForm.value.name;
+    this.username = this.registerForm.value.username;
+    this.password = this.registerForm.value.password;
+
     var user: User = new User();
     user.email = this.email;
     user.name = this.name;

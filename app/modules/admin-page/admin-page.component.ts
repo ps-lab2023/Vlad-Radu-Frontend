@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MovieService } from 'src/app/service/Movie.service';
+import { UserService } from 'src/app/service/User.service';
+import { Chart } from 'chart.js/auto';
 
 declare global {
   interface Window {
@@ -14,21 +16,32 @@ declare global {
 })
 export class AdminPageComponent implements OnInit{
 
+  //chart
+  names: any;
+  ratingsCount: any;
+
+  importMovies: any;
+  selectedUser: any;
+  users: any;
+
   @ViewChild('movieTextArea') movieTextArea: any;
   searchText: string = "";
   movies: any;
-  selectedMovie: any;
+  selectedMovie: any; // = {id: 0, title: "", year: 0, actors: []};
 
   viewMovieModal:any;
   editMovieModal:any;
   deleteMovieModal:any;
   addMovieModal:any;
-  importFileModal:any;
+  generateXMLModal:any;
+  deleteUserModal:any;
 
-  constructor(private movieService: MovieService) { }
+  constructor(private movieService: MovieService,
+              private userService: UserService) { }
 
   ngOnInit() {
     this.getMovies();
+    this.getUsers();
 
     this.viewMovieModal = new window.bootstrap.Modal(
       document.getElementById("viewMovieModal")
@@ -46,8 +59,12 @@ export class AdminPageComponent implements OnInit{
       document.getElementById("addMovieModal")
     );
 
-    this.importFileModal = new window.bootstrap.Modal(
-      document.getElementById("importFileModal")
+    this.generateXMLModal = new window.bootstrap.Modal(
+      document.getElementById("generateXMLModal")
+    );
+
+    this.deleteUserModal = new window.bootstrap.Modal(
+      document.getElementById("deleteUserModal")
     );
   }
 
@@ -58,6 +75,21 @@ export class AdminPageComponent implements OnInit{
 
   closeViewMovieModal(){
     this.viewMovieModal?.hide();
+  }
+
+  getTitle(): string {
+    console.log(this.selectedMovie.title);
+    return this.selectedMovie.title;
+  }
+
+  getActorsAsJson(): string {
+    //console.log(JSON.stringify(this.selectedMovie.actors));
+    return JSON.stringify(this.selectedMovie.actors);
+  }
+
+  getRatingAsJson(): string {
+    //console.log(JSON.stringify(this.selectedMovie.ratings));
+    return JSON.stringify(this.selectedMovie.ratings);
   }
 
   openEditMovieModal(id: number){
@@ -103,16 +135,30 @@ export class AdminPageComponent implements OnInit{
     this.addMovie(JSON.parse(movieData));
   }
 
-  openImportFileModal(){
-    this.importFileModal?.show();
+  openGenerateXMLModal(){
+    this.generateXMLModal?.show();
   }
 
-  closeImportFileModal(){
-    this.importFileModal?.hide();
+  closeGenerateXMLModal(){
+    this.generateXMLModal?.hide();
   }
 
-  confirmImportFileModal(){
-    this.importFileModal?.hide();
+  confirmGenerateXMLModal(){
+    this.generateXMLModal?.hide();
+  }
+
+  openDeleteUserModal(id: number){
+    this.deleteUserModal?.show();
+    this.selectedUser = this.getUserById(id);
+  }
+
+  closeDeleteUserModal(){
+    this.deleteUserModal?.hide();
+  }
+
+  confirmDeleteUserModal(){
+    this.deleteUser(this.selectedUser.id);
+    this.closeDeleteUserModal();
   }
 
   addMovie(movie: any) {
@@ -175,9 +221,66 @@ export class AdminPageComponent implements OnInit{
     );
   }
 
-  getActorsAsJson(): string {
-    return JSON.stringify(this.selectedMovie.actors);
-    //return JSON.stringify(JSON.parse(this.selectedMovie.actors));
+  getUsers() {
+    this.userService.getAllUsers().subscribe(
+      (data) => {
+        this.users = data;
+        console.log(data);
+        this.names = [];
+        this.ratingsCount = [];
+
+        for (let user of this.users) {
+          if(!user.admin) {
+            this.names.push(user.name);
+            this.ratingsCount.push(user.ratings.length);
+          }
+        }
+
+        this.createChart();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  getUserById(id: number) {
+    this.userService.getUserById(id).subscribe(
+      (data) => {
+        this.selectedUser = data;
+        console.log(data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  deleteUser(id: number) {
+    this.userService.deleteUser(id).subscribe(
+      (data) => {
+        console.log(data);
+        this.getUsers();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  createChart() {
+    var barColors = ["teal","indigo","maroon","olive","aqua","silver","navy"];
+
+    new Chart("myChart", {
+      type: "bar",
+      data: {
+        labels: this.names,
+        datasets: [{
+          backgroundColor: barColors,
+          data: this.ratingsCount
+        }]
+      }
+    });
   }
 
 }

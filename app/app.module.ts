@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,8 @@ import { UserPageComponent } from './modules/user-page/user-page.component';
 import { AdminPageComponent } from './modules/admin-page/admin-page.component';
 import { FooterComponent } from './modules/footer/footer.component';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { NotificationComponent } from './modules/notification/notification.component';
+import { JsonPipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     UserPageComponent,
     AdminPageComponent,
     FooterComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,
@@ -34,6 +38,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     HttpClientModule,
     FormsModule,
     Ng2SearchPipeModule,
+    JsonPipe,
+    ReactiveFormsModule
 
   ],
   providers: [MovieService],

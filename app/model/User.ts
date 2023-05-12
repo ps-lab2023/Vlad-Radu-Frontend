@@ -11,4 +11,5 @@ export class User {
   ratings: Rating[] | undefined;
   favoriteMovies: Movie[] | undefined;
   watchList: Movie[] | undefined;
+  lastLogin: Date | undefined;
 }

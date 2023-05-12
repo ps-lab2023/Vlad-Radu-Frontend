@@ -29,6 +29,10 @@ export class UserService {
     return this.httpClient.get<User>(this.baseUrl + "/byId/" + id);
   }
 
+  getUserByEmail(email: string) {
+    return this.httpClient.get<User>(this.baseUrl + "/byEmail/" + email);
+  }
+
   updateUser(user: User) {
     return this.httpClient.put(this.baseUrl + "/updateUser", user);
   }
@@ -51,5 +55,13 @@ export class UserService {
 
   removeMovieFromWatchList(userId: number, movieId: number) {
     return this.httpClient.delete(this.baseUrl + "/removeMovieFromWatchList/" + userId + "/" + movieId);
+  }
+
+  setLastLogin(userId: number | undefined) {
+    return this.httpClient.put(this.baseUrl + "/setLastLogin/" + userId, null);
+  }
+
+  sendEmail(email: string, subject: string, body: string) {
+    return this.httpClient.post(this.baseUrl + "/sendEmail/" + email + "/" + subject + "/" + body, null);
   }
 }

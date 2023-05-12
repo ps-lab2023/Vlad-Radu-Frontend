@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/service/User.service';
 import { User } from 'src/app/model/User';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -9,15 +10,73 @@ import { User } from 'src/app/model/User';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit{
-  username: string = "";
-  password: string = "";
+
+  loginForm: FormGroup = new FormGroup({});
+
+  username = '';
+  password = '';
   users: User[] = [];
 
+  searchedUser: any;
+  searchEmail: string = "";
+  sendEmailModal: any;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService,
+              private router: Router,
+              private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.getUsers();
+
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+
+    this.sendEmailModal = new window.bootstrap.Modal(
+      document.getElementById("sendEmailModal")
+    );
+  }
+
+  openSendEmailModal(){
+    this.sendEmailModal?.show();
+  }
+
+  closeSendEmailModal(){
+    this.sendEmailModal?.hide();
+  }
+
+  confirmSendEmailModal(){
+    this.sendEmailModal?.hide();
+
+    this.userService.getUserByEmail(this.searchEmail).subscribe(
+      (data) => {
+        this.searchedUser = data;
+        console.log(this.searchedUser);
+
+        this.sendEmail();
+      }
+    )
+  }
+
+  sendEmail() {
+    if (!this.searchedUser) {
+      console.log('No user found.');
+      return;
+    }
+
+    const email = this.searchedUser.email;
+    const subject = 'Username and Password';
+    const body = `Here is your username and password:  ${this.searchedUser.username}  ${this.searchedUser.password}`;
+
+    this.userService.sendEmail(email, subject, body).subscribe(
+      (data) => {
+        console.log(data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   getUsers() {
@@ -33,10 +92,25 @@ export class LoginComponent implements OnInit{
   }
 
   loginUser() {
+
+    this.username = this.loginForm.value.username;
+    this.password = this.loginForm.value.password;
+
+    console.log("username: " + this.username);
+    console.log("password: " + this.password);
+
     var userFound: boolean = false;
     for(let user of this.users) {
       if(user.username == this.username && user.password == this.password) {
         console.log("User found");
+        this.userService.setLastLogin(user.id).subscribe(
+          (data) => {
+            console.log(data);
+          },
+          (error) => {
+            console.log(error);
+          }
+        )
         userFound = true;
         this.checkUser(user);
       }
@@ -53,5 +127,4 @@ export class LoginComponent implements OnInit{
       this.router.navigate(['user/' + user.id]);
     }
   }
-
 }

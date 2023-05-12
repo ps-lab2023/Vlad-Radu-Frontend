@@ -107,11 +107,14 @@ export class UserPageComponent implements OnInit {
   }
 
   isFavorite(id: number) {
-    for(let movie of this.user.favoriteMovies) {
-      if(movie.id == id) {
-        return true;
+    if(this.user != null && this.user.favoriteMovies != null) {
+      for(let movie of this.user.favoriteMovies) {
+        if(movie.id == id) {
+          return true;
+        }
       }
     }
+
     return false;
   }
 
@@ -158,11 +161,14 @@ export class UserPageComponent implements OnInit {
   }
 
   isWatched(id: number) {
-    for(let movie of this.user.watchList) {
-      if(movie.id == id) {
-        return true;
+    if(this.user != null && this.user.watchList != null) {
+      for(let movie of this?.user?.watchList) {
+        if(movie.id == id) {
+          return true;
+        }
       }
     }
+
     return false;
   }
 
